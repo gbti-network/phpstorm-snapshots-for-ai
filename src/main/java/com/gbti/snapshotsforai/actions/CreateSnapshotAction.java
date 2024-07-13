@@ -8,17 +8,19 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class CreateSnapshotAction extends AnAction {
     @Override
@@ -34,7 +36,7 @@ public class CreateSnapshotAction extends AnAction {
             return;
         }
 
-        java.nio.file.Path configFilePath = Paths.get(basePath, ".snapshots", "config.json");
+        Path configFilePath = Paths.get(basePath, ".snapshots", "config.json");
         if (!Files.exists(configFilePath)) {
             Messages.showErrorDialog("Config file not found. Please restart the IDE.", "Snapshots for AI");
             return;
@@ -49,22 +51,29 @@ public class CreateSnapshotAction extends AnAction {
         }
 
         JSONObject config = new JSONObject(configContent);
-        String defaultPrompt = config.optString("default_prompt", "");
+        JSONObject defaultConfig = config.optJSONObject("default");
+        String defaultPrompt = defaultConfig.optString("default_prompt", "");
+        boolean defaultIncludeEntireProjectStructure = defaultConfig.optBoolean("default_include_entire_project_structure", false);
+        boolean defaultIncludeAllFiles = defaultConfig.optBoolean("default_include_all_files", false);
         JSONArray excludedPatterns = config.optJSONArray("excluded_patterns");
 
-        SnapshotDialog dialog = new SnapshotDialog(project, defaultPrompt, false);
+        SnapshotDialog dialog = new SnapshotDialog(project, defaultPrompt, defaultIncludeEntireProjectStructure, defaultIncludeAllFiles);
         if (!dialog.showAndGet()) {
             return;
         }
 
         String prompt = dialog.getPrompt();
         boolean includeEntireProjectStructure = dialog.isIncludeEntireProjectStructure();
-        boolean includeAllProjectFiles = dialog.isIncludeAllProjectFiles();
+        boolean includeAllFiles = dialog.isIncludeAllProjectFiles();
         List<String> selectedFiles = dialog.getSelectedFiles();
 
-        if (includeEntireProjectStructure || includeAllProjectFiles) {
+        // If "Include all project files" is checked, get all project files not excluded by patterns
+        if (includeAllFiles) {
             selectedFiles = getAllProjectFiles(basePath, excludedPatterns);
         }
+
+        // Filter out image files except SVGs
+        selectedFiles = filterOutImageFiles(selectedFiles);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH_mm_ss");
         String timestamp = LocalDateTime.now().format(formatter);
@@ -73,10 +82,12 @@ public class CreateSnapshotAction extends AnAction {
         StringBuilder markdown = new StringBuilder();
         markdown.append(prompt).append("\n\n");
 
+        // Add project structure if "Include entire project structure" is checked
         if (includeEntireProjectStructure) {
             markdown.append("# Project Structure\n\n");
             try {
-                markdown.append(formatProjectStructure(basePath, selectedFiles));
+                List<String> projectFiles = getAllProjectFiles(basePath, excludedPatterns);
+                markdown.append(formatProjectStructure(basePath, projectFiles));
             } catch (Exception ex) {
                 markdown.append("Exception occurred while formatting project structure: ").append(ex.getMessage()).append("\n");
                 for (StackTraceElement element : ex.getStackTrace()) {
@@ -86,9 +97,8 @@ public class CreateSnapshotAction extends AnAction {
             markdown.append("\n\n");
         }
 
+        // Add selected or all files in "# Project Files"
         markdown.append("# Project Files\n\n");
-
-        // Add a list of selected files
         for (String filePath : selectedFiles) {
             markdown.append("- ").append(filePath).append("\n");
         }
@@ -112,8 +122,8 @@ public class CreateSnapshotAction extends AnAction {
         }
 
         try {
-            java.nio.file.Path snapshotsDir = Paths.get(basePath, ".snapshots");
-            java.nio.file.Path snapshotFile = snapshotsDir.resolve(fileName);
+            Path snapshotsDir = Paths.get(basePath, ".snapshots");
+            Path snapshotFile = snapshotsDir.resolve(fileName);
             Files.write(snapshotFile, markdown.toString().getBytes(StandardCharsets.UTF_8));
 
             VirtualFile virtualFile = VirtualFileManager.getInstance().refreshAndFindFileByUrl(snapshotFile.toUri().toString());
@@ -133,7 +143,8 @@ public class CreateSnapshotAction extends AnAction {
         if (excludedPatterns != null) {
             for (int i = 0; i < excludedPatterns.length(); i++) {
                 String patternStr = excludedPatterns.getString(i);
-                patterns.add(Pattern.compile(".*" + Pattern.quote(patternStr) + "(/.*)?"));
+                patternStr = patternStr.replace(".", "\\.").replace("*", ".*"); // Convert glob patterns to regex patterns
+                patterns.add(Pattern.compile(".*" + patternStr + "(/.*)?"));
             }
         }
 
@@ -151,6 +162,17 @@ public class CreateSnapshotAction extends AnAction {
             e.printStackTrace();
         }
         return fileList;
+    }
+
+
+    private List<String> filterOutImageFiles(List<String> filePaths) {
+        List<String> filteredFiles = new ArrayList<>();
+        for (String filePath : filePaths) {
+            if (!filePath.matches(".*\\.(jpg|jpeg|png|gif|bmp|tiff)$") || filePath.endsWith(".svg")) {
+                filteredFiles.add(filePath);
+            }
+        }
+        return filteredFiles;
     }
 
     private String formatProjectStructure(String basePath, List<String> filePaths) {

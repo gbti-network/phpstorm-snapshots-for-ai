@@ -11,6 +11,10 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +27,9 @@ public class SnapshotDialog extends DialogWrapper {
     private final JLabel allFilesLabel;
     private final JScrollPane scrollPane;
     private final Project project;
+    private final JButton toggleButton;
 
-    public SnapshotDialog(@Nullable Project project, String defaultPrompt, boolean defaultIncludeEntireProjectStructure) {
+    public SnapshotDialog(@Nullable Project project, String defaultPrompt, boolean defaultIncludeEntireProjectStructure, boolean defaultIncludeAllFiles) {
         super(project);
         this.project = project;
         setTitle("Generate Markdown Snapshot");
@@ -45,24 +50,32 @@ public class SnapshotDialog extends DialogWrapper {
         includeEntireProjectStructureCheckBox.setSelected(defaultIncludeEntireProjectStructure);
 
         includeAllProjectFilesCheckBox = new JCheckBox("Include all project files");
-        includeAllProjectFilesCheckBox.addItemListener(e -> toggleFileCheckboxesVisibility());
+        includeAllProjectFilesCheckBox.setSelected(defaultIncludeAllFiles);
+        includeAllProjectFilesCheckBox.addItemListener(e -> toggleFileCheckboxesVisibility(e.getStateChange() == ItemEvent.SELECTED));
 
-        filesPanel = new JPanel(new GridLayout(fileCheckBoxes.size(), 1, 5, 5));
+        toggleButton = new JButton("Select/Deselect All");
+        toggleButton.setFont(toggleButton.getFont().deriveFont(Font.PLAIN, 10));
+        toggleButton.addActionListener(this::toggleFileSelections);
+
+        filesPanel = new JPanel(new GridLayout(0, 1, 5, 5));
         if (fileCheckBoxes.isEmpty()) {
             JLabel noFilesLabel = new JLabel("No files are currently open.");
             filesPanel.add(noFilesLabel);
         } else {
             for (JCheckBox checkBox : fileCheckBoxes) {
-                if (checkBox != null) {
-                    filesPanel.add(checkBox);
-                }
+                filesPanel.add(checkBox);
             }
         }
 
         allFilesLabel = new JLabel("<html><i>All applicable files located in the project will be included in the snapshot markdown.</i></html>");
-        allFilesLabel.setVisible(false);
+        allFilesLabel.setVisible(defaultIncludeAllFiles);
 
         scrollPane = new JScrollPane(filesPanel);
+        if (defaultIncludeAllFiles) {
+            filesPanel.setVisible(false);
+            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        }
 
         init();
     }
@@ -72,29 +85,51 @@ public class SnapshotDialog extends DialogWrapper {
     protected JComponent createCenterPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
 
-        panel.add(scrollPane, BorderLayout.CENTER);
-        panel.add(allFilesLabel, BorderLayout.SOUTH);
-
-        JPanel optionsPanel = new JPanel(new GridLayout(2, 1, 5, 5));
         JPanel promptPanel = new JPanel(new BorderLayout(5, 5));
         promptPanel.add(new JLabel("Prompt:"), BorderLayout.WEST);
         promptPanel.add(promptField, BorderLayout.CENTER);
 
-        optionsPanel.add(promptPanel);
-        optionsPanel.add(includeEntireProjectStructureCheckBox);
-        optionsPanel.add(includeAllProjectFilesCheckBox);
+        JPanel optionsPanel = new JPanel(new BorderLayout());
+        JPanel optionsLeftPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        optionsLeftPanel.add(includeEntireProjectStructureCheckBox);
+
+        JPanel includeAllPanel = new JPanel(new BorderLayout());
+        includeAllPanel.add(includeAllProjectFilesCheckBox, BorderLayout.WEST);
+        includeAllPanel.add(toggleButton, BorderLayout.EAST);
+
+        optionsLeftPanel.add(includeAllPanel);
+
+        optionsPanel.add(promptPanel, BorderLayout.NORTH);
+        optionsPanel.add(optionsLeftPanel, BorderLayout.CENTER);
 
         panel.add(optionsPanel, BorderLayout.NORTH);
+        panel.add(scrollPane, BorderLayout.CENTER);
+        panel.add(allFilesLabel, BorderLayout.SOUTH);
 
         return panel;
     }
 
-    private void toggleFileCheckboxesVisibility() {
-        boolean includeAllFiles = includeAllProjectFilesCheckBox.isSelected();
+    private void toggleFileCheckboxesVisibility(boolean includeAllFiles) {
         filesPanel.setVisible(!includeAllFiles);
         allFilesLabel.setVisible(includeAllFiles);
-        this.getContentPane().revalidate();
-        this.getContentPane().repaint();
+
+        if (includeAllFiles) {
+            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        } else {
+            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        }
+
+        scrollPane.revalidate();
+        scrollPane.repaint();
+    }
+
+    private void toggleFileSelections(ActionEvent e) {
+        boolean selectAll = fileCheckBoxes.stream().anyMatch(checkBox -> !checkBox.isSelected());
+        for (JCheckBox checkBox : fileCheckBoxes) {
+            checkBox.setSelected(selectAll);
+        }
     }
 
     public String getPrompt() {
@@ -140,7 +175,7 @@ public class SnapshotDialog extends DialogWrapper {
             return;
         }
 
-        java.nio.file.Path configFilePath = Paths.get(basePath, ".snapshots", "config.json");
+        Path configFilePath = Paths.get(basePath, ".snapshots", "config.json");
         if (!Files.exists(configFilePath)) {
             Messages.showErrorDialog("Config file not found. Please restart the IDE.", "Snapshots for AI");
             return;
@@ -149,6 +184,7 @@ public class SnapshotDialog extends DialogWrapper {
         VirtualFile configFile = VirtualFileManager.getInstance().refreshAndFindFileByUrl(configFilePath.toUri().toString());
         if (configFile != null) {
             FileEditorManager.getInstance(project).openFile(configFile, true);
+            close(DialogWrapper.CANCEL_EXIT_CODE);
         } else {
             Messages.showErrorDialog("Unable to open config file", "Snapshots for AI");
         }
