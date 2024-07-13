@@ -1,10 +1,9 @@
 package com.gbti.snapshotsforai.actions;
 
-import com.gbti.snapshotsforai.SnapshotsToolWindowFactory;
+import com.gbti.snapshotsforai.SnapshotDialog;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -28,19 +27,6 @@ public class CreateSnapshotAction extends AnAction {
         if (project == null) {
             return;
         }
-
-        // Register listener to update tool window content on file open/close events
-        project.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
-            @Override
-            public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-                refreshToolWindowContent(project);
-            }
-
-            @Override
-            public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-                refreshToolWindowContent(project);
-            }
-        });
 
         String basePath = project.getBasePath();
         if (basePath == null) {
@@ -66,15 +52,17 @@ public class CreateSnapshotAction extends AnAction {
         String defaultPrompt = config.optString("default_prompt", "");
         JSONArray excludedPatterns = config.optJSONArray("excluded_patterns");
 
-        SnapshotsToolWindowFactory factory = new SnapshotsToolWindowFactory();
-        factory.updateToolWindowContent(project);
+        SnapshotDialog dialog = new SnapshotDialog(project, defaultPrompt, false);
+        if (!dialog.showAndGet()) {
+            return;
+        }
 
-        // Generate the markdown snapshot as before
-        String prompt = factory.getToolWindowContent().getPrompt();
-        boolean includeEntireProjectStructure = factory.getToolWindowContent().isIncludeEntireProjectStructure();
-        List<String> selectedFiles = factory.getToolWindowContent().getSelectedFiles();
+        String prompt = dialog.getPrompt();
+        boolean includeEntireProjectStructure = dialog.isIncludeEntireProjectStructure();
+        boolean includeAllProjectFiles = dialog.isIncludeAllProjectFiles();
+        List<String> selectedFiles = dialog.getSelectedFiles();
 
-        if (includeEntireProjectStructure) {
+        if (includeEntireProjectStructure || includeAllProjectFiles) {
             selectedFiles = getAllProjectFiles(basePath, excludedPatterns);
         }
 
@@ -137,11 +125,6 @@ public class CreateSnapshotAction extends AnAction {
         } catch (IOException ex) {
             Messages.showErrorDialog("Error creating snapshot: " + ex.getMessage(), "Snapshots for AI");
         }
-    }
-
-    private void refreshToolWindowContent(Project project) {
-        SnapshotsToolWindowFactory factory = new SnapshotsToolWindowFactory();
-        factory.updateToolWindowContent(project);
     }
 
     private List<String> getAllProjectFiles(String basePath, JSONArray excludedPatterns) {

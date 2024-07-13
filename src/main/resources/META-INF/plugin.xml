@@ -28,29 +28,18 @@
         </component>
     </project-components>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Snapshots for AI"
-                    secondary="true"
-                    icon="icons/camera-16.svg"
-                    anchor="right"
-                    factoryClass="com.gbti.snapshotsforai.SnapshotsToolWindowFactory"/>
-    </extensions>
-
     <actions>
-        <action id="com.gbti.snapshotsforai.actions.CreateSnapshotActionWithText"
-                class="com.gbti.snapshotsforai.actions.CreateSnapshotAction"
-                text="Create Snapshot"
-                icon="/icons/camera-16.svg">
+
+        <action id="com.gbti.snapshotsforai.actions.CreateSnapshotActionWithText" class="com.gbti.snapshotsforai.actions.CreateSnapshotAction" text="Create Snapshot" icon="/icons/camera-16.svg">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
 
         <action id="com.gbti.snapshotsforai.actions.MainToolbarRight"
                 class="com.gbti.snapshotsforai.actions.CreateSnapshotAction"
-                text="Create a markdown snapshot."
-                description="Create a markdown snapshot."
+                text="Create a markdown snapshot"
+                description="Create a markdown snapshot"
                 icon="/icons/camera-20.svg">
             <add-to-group group-id="MainToolbarRight" anchor="first"/>
         </action>
-
     </actions>
 </idea-plugin>

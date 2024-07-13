@@ -42,6 +42,8 @@ public class SnapshotInitializer implements ProjectComponent {
                 "    \"default_prompt\": \"Enter your prompt here\",\n" +
                 "    \"excluded_patterns\": [\n" +
                 "        \".git\",\n" +
+                "        \".gitignore\",\n" +
+                "        \"gradlew\",\n" +
                 "        \"node_modules\",\n" +
                 "        \".snapshots\",\n" +
                 "        \".idea\",\n" +
@@ -76,7 +78,9 @@ public class SnapshotInitializer implements ProjectComponent {
                 "- `default_prompt`: A default prompt to be used when creating snapshots.\n" +
                 "- `excluded_patterns`: A list of patterns to exclude from the project structure snapshot. Patterns include:\n" +
                 "  - `.git`\n" +
+                "  - `.gitignore`\n" +
                 "  - `.gradle`\n" +
+                "  - `gradlew`\n" +
                 "  - `node_modules`\n" +
                 "  - `.snapshots`\n" +
                 "  - `.idea`\n" +
