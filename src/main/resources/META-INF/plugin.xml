@@ -1,0 +1,56 @@
+<idea-plugin>
+    <id>com.gbti.snapshotsforai</id>
+    <name>Snapshots for AI</name>
+    <version>2023.7.13.1</version>
+
+    <vendor email="gbti.labs@gmail.com" url="http://gbti.network">GBTI Network</vendor>
+
+    <description><![CDATA[
+        A custom plugin for PHPStorm to generate machine-readable markdown snapshots of files the user is currently working on. These generated markdown files can be fed to your favorite LLM.
+    ]]></description>
+
+    <change-notes><![CDATA[
+<h2>2023.7.13</h2>
+<ul>
+  <li>Initialize Prototype</li>
+</ul>]]>
+    </change-notes>
+
+    <idea-version since-build="222.0" until-build="233.*"/>
+
+    <!-- Define explicit module dependencies -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.jetbrains.php</depends>
+
+    <project-components>
+        <component>
+            <implementation-class>com.gbti.snapshotsforai.SnapshotInitializer</implementation-class>
+        </component>
+    </project-components>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="Snapshots for AI"
+                    secondary="true"
+                    icon="icons/camera-16.svg"
+                    anchor="right"
+                    factoryClass="com.gbti.snapshotsforai.SnapshotsToolWindowFactory"/>
+    </extensions>
+
+    <actions>
+        <action id="com.gbti.snapshotsforai.actions.CreateSnapshotActionWithText"
+                class="com.gbti.snapshotsforai.actions.CreateSnapshotAction"
+                text="Create Snapshot"
+                icon="/icons/camera-16.svg">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+
+        <action id="com.gbti.snapshotsforai.actions.MainToolbarRight"
+                class="com.gbti.snapshotsforai.actions.CreateSnapshotAction"
+                text="Create a markdown snapshot."
+                description="Create a markdown snapshot."
+                icon="/icons/camera-20.svg">
+            <add-to-group group-id="MainToolbarRight" anchor="first"/>
+        </action>
+
+    </actions>
+</idea-plugin>
