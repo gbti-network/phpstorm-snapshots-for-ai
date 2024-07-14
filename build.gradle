@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.gbti'
-version '2023.7.13.1'
+version '2024.7.24'
 
 repositories {
     mavenCentral()
@@ -13,7 +13,7 @@ repositories {
 
 intellij {
     pluginName = "Snapshots for AI"
-    version = "2022.2"
+    version = '2022.2'
     type = "PS"
     plugins = ['com.jetbrains.php']
 }

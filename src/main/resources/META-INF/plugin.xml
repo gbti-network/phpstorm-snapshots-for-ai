@@ -1,18 +1,23 @@
 <idea-plugin>
     <id>com.gbti.snapshotsforai</id>
     <name>Snapshots for AI</name>
-    <version>2023.7.13.1</version>
-
-    <vendor email="gbti.labs@gmail.com" url="http://gbti.network">GBTI Network</vendor>
+    <version>2024.7.24</version>
+    <product-descriptor code="PSNAPSHOTSFORAI" release-date="20240713" release-version="20247"/>
+    <vendor email="hudson.atwell@gmail.com" url="http://gbti.network">GBTI Network</vendor>
 
     <description><![CDATA[
-        A custom plugin for PHPStorm to generate machine-readable markdown snapshots of files the user is currently working on. These generated markdown files can be fed to your favorite LLM.
-    ]]></description>
+        Snapshots for AI helps generate machine-readable markdown snapshots of files that users are currently working on. This innovative tool empowers developers by providing an efficient way to document and share their codebase structure and content, making collaboration and code review processes smoother and more intuitive.
+
+        By leveraging the capabilities of Snapshots for AI, developers can effortlessly create comprehensive markdown files that capture the essence of their projects. These generated snapshots are ideal for feeding into advanced large language models (LLMs) such as ChatGPT, Claude.AI, and Grok, enabling a new level of interaction and analysis with your code. Whether you are seeking insights, debugging assistance, or code enhancement suggestions, these LLMs can process the markdown snapshots to provide valuable feedback and recommendations.
+
+        The plugin offers flexible configuration options, allowing users to include or exclude specific files and patterns, ensuring that only the relevant parts of the project are captured. Additionally, users can choose to document the entire project structure or focus on individual files, tailoring the snapshots to their specific needs. With Snapshots for AI, you can enhance your development workflow, improve documentation practices, and leverage the power of AI to take your coding experience to new heights.
+]]></description>
+
 
     <change-notes><![CDATA[
-<h2>2023.7.13</h2>
+<h2>2024.7.20</h2>
 <ul>
-  <li>Initialize Prototype</li>
+  <li>Initialize The Prototype!</li>
 </ul>]]>
     </change-notes>
 
