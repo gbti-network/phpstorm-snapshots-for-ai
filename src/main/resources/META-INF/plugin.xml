@@ -1,8 +1,8 @@
 <idea-plugin>
     <id>com.gbti.snapshotsforai</id>
     <name>Snapshots for AI</name>
-    <version>2024.8.2</version>
-    <!--<product-descriptor code="PSNAPSHOTSFORAI" release-date="20240718" release-version="20248"/>-->
+    <version>2024.8.3</version>
+    <product-descriptor code="PSNAPSHOTSFORAI" release-date="20240719" release-version="20248"/>
     <vendor email="hudson.atwell@gmail.com" url="http://gbti.network">GBTI Network</vendor>
 
     <description><![CDATA[
@@ -25,11 +25,9 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.jetbrains.php</depends>
 
-    <project-components>
-        <component>
-            <implementation-class>com.gbti.snapshotsforai.SnapshotInitializer</implementation-class>
-        </component>
-    </project-components>
+    <applicationListeners>
+        <listener class="com.gbti.snapshotsforai.SnapshotProjectManagerListener" topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    </applicationListeners>
 
     <actions>
 

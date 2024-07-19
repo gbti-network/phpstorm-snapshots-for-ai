@@ -13,19 +13,15 @@ Snapshots for AI is a custom plugin for PHPStorm that generates machine-readable
 
 ## Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/phpstorm-snapshots-for-ai.git
-   ```
+1. Download and install the plugin from the [JetBrains Plugin Repository](https://plugins.jetbrains.com/plugin/24889-snapshots-for-ai/).
 
-2. Open the project in PHPStorm.
+2. Open a project in PHPStorm.
 
-3. Build the plugin:
-    - Navigate to `Build > Build Project` in PHPStorm.
-
-4. Install the plugin:
-    - Go to `File > Settings > Plugins > Install Plugin from Disk...`.
-    - Select the generated plugin JAR file from the `build` directory.
+3. Find the plugin and activate the free trial:
+   - Navigate to `File > Settings > Plugins`.
+   - Search for "Snapshots for AI".
+   - Click on the plugin and select `Install`.
+   - After installation, click on `Activate Free Trial`.
 
 ## Usage
 
@@ -99,6 +95,8 @@ To contribute to the development of this plugin, follow these steps:
    ```
 
 5. **Create a pull request** on GitHub.
+
+Note, to 
 
 ## Contact
 

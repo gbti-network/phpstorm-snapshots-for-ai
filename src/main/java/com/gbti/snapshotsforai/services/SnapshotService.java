@@ -1,6 +1,6 @@
 package com.gbti.snapshotsforai;
 
-import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.json.JSONArray;
@@ -11,23 +11,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class SnapshotInitializer implements ProjectComponent {
+@Service
+public final class SnapshotService {
     private final Project project;
 
-    public SnapshotInitializer(Project project) {
+    public SnapshotService(Project project) {
         this.project = project;
     }
 
-    @Override
-    public void projectOpened() {
-        try {
-            initializeSnapshotDirectory();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void initializeSnapshotDirectory() throws IOException {
+    public void initializeSnapshotDirectory() throws IOException {
         String basePath = project.getBasePath();
         if (basePath == null) {
             throw new IOException("Project base path is null");
@@ -146,33 +138,5 @@ public class SnapshotInitializer implements ProjectComponent {
         Files.write(readmeFilePath, readmeContent.getBytes());
 
         VirtualFileManager.getInstance().syncRefresh();
-    }
-
-    public void createSnapshotDialog() {
-        String basePath = project.getBasePath();
-        if (basePath == null) {
-            return;
-        }
-
-        Path configFilePath = Paths.get(basePath, ".snapshots", "config.json");
-        JSONObject config;
-        try {
-            String configContent = new String(Files.readAllBytes(configFilePath));
-            config = new JSONObject(configContent);
-        } catch (IOException e) {
-            config = new JSONObject();
-        }
-
-        JSONObject defaultConfig = config.optJSONObject("default");
-        if (defaultConfig == null) {
-            defaultConfig = new JSONObject();
-        }
-
-        String defaultPrompt = defaultConfig.optString("default_prompt", "Enter your prompt here");
-        boolean defaultIncludeEntireProjectStructure = defaultConfig.optBoolean("default_include_entire_project_structure", true);
-        boolean defaultIncludeAllFiles = defaultConfig.optBoolean("default_include_all_files", false);
-
-        SnapshotDialog dialog = new SnapshotDialog(project, defaultPrompt, defaultIncludeEntireProjectStructure, defaultIncludeAllFiles);
-        dialog.show();
     }
 }
