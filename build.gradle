@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.gbti'
-version '2024.7.24'
+version '2024.8.2'
 
 repositories {
     mavenCentral()

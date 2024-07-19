@@ -118,7 +118,7 @@ public class SnapshotDialog extends DialogWrapper {
             scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         } else {
             scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED); // Corrected to AS_NEEDED
         }
 
         scrollPane.revalidate();
@@ -181,8 +181,9 @@ public class SnapshotDialog extends DialogWrapper {
             return;
         }
 
-        VirtualFile configFile = VirtualFileManager.getInstance().refreshAndFindFileByUrl(configFilePath.toUri().toString());
+        VirtualFile configFile = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(configFilePath);
         if (configFile != null) {
+            configFile.refresh(false, false);
             FileEditorManager.getInstance(project).openFile(configFile, true);
             close(DialogWrapper.CANCEL_EXIT_CODE);
         } else {

@@ -123,11 +123,23 @@ public class CreateSnapshotAction extends AnAction {
 
         try {
             Path snapshotsDir = Paths.get(basePath, ".snapshots");
+            if (!Files.exists(snapshotsDir)) {
+                Files.createDirectories(snapshotsDir);
+            }
+
             Path snapshotFile = snapshotsDir.resolve(fileName);
             Files.write(snapshotFile, markdown.toString().getBytes(StandardCharsets.UTF_8));
 
-            VirtualFile virtualFile = VirtualFileManager.getInstance().refreshAndFindFileByUrl(snapshotFile.toUri().toString());
+            // Refresh the snapshots directory to ensure the new file is visible
+            VirtualFile snapshotsVirtualDir = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(snapshotsDir);
+            if (snapshotsVirtualDir != null) {
+                snapshotsVirtualDir.refresh(false, true);
+            }
+
+            // Refresh and open the snapshot file in the editor
+            VirtualFile virtualFile = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(snapshotFile);
             if (virtualFile != null) {
+                virtualFile.refresh(false, false);
                 FileEditorManager.getInstance(project).openFile(virtualFile, true);
             }
 
@@ -163,7 +175,6 @@ public class CreateSnapshotAction extends AnAction {
         }
         return fileList;
     }
-
 
     private List<String> filterOutImageFiles(List<String> filePaths) {
         List<String> filteredFiles = new ArrayList<>();

@@ -74,6 +74,7 @@ public class SnapshotInitializer implements ProjectComponent {
                 .put("coverage")
                 .put("*.min.js")
                 .put("*.min.css")
+                .put("__pycache__")
             );
         }
 
@@ -124,6 +125,7 @@ public class SnapshotInitializer implements ProjectComponent {
                 "  - `coverage`\n" +
                 "  - `*.min.js`\n" +
                 "  - `*.min.css`\n" +
+                "  - `__pycache__`\n" +
                 "- `default`: A subkey containing default settings:\n" +
                 "  - `default_prompt`: A default prompt to be used when creating snapshots.\n" +
                 "  - `default_include_entire_project_structure`: A boolean setting to include the entire project structure by default.\n" +
