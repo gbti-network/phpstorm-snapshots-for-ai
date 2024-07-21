@@ -96,8 +96,6 @@ To contribute to the development of this plugin, follow these steps:
 
 5. **Create a pull request** on GitHub.
 
-Note, to 
-
 ## Contact
 
 For any inquiries or support, please contact [gbti.labs@gmail.com](mailto:gbti.labs@gmail.com).
