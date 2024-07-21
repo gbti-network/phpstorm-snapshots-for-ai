@@ -19,10 +19,6 @@ https://plugins.jetbrains.com/plugin/24889-snapshots-for-ai/example-markdown-out
 - **Selective File Inclusion**: Choose specific files or include all files from the project in the snapshot.
 - **Configurable Exclusions**: Exclude specific file patterns from snapshots using the configuration file.
 
-![image](https://github.com/user-attachments/assets/bfbaa1f3-6e25-4c82-bd7f-648e42c1e7ee)
-![image](https://github.com/user-attachments/assets/747bda18-8573-4573-8839-2ef7d21d61eb)
-![image](https://github.com/user-attachments/assets/1b5c1c4e-a7d6-4b9f-b6ad-bb0bd78b1d81)
-
 ## Installation
 
 1. Download and install the plugin from the [JetBrains Plugin Repository](https://plugins.jetbrains.com/plugin/24889-snapshots-for-ai/).
@@ -40,9 +36,15 @@ https://plugins.jetbrains.com/plugin/24889-snapshots-for-ai/example-markdown-out
 1. **Creating a Snapshot**:
     - Navigate to `Tools > Create Snapshot` or click the camera icon at the top right side of the main toolbar.
     - Enter your prompt, select the files to include, and click `OK`.
-      
-![image](https://github.com/user-attachments/assets/e71f10db-b520-49c0-a371-1fdfa604f362)
+    - Snapshop will be generated and opened automatically.
+    - Snapshots are stored inside the `.snapshots` directory at the root of your project application
 
+### Screenshots
+
+![image](https://github.com/user-attachments/assets/e71f10db-b520-49c0-a371-1fdfa604f362)
+![image](https://github.com/user-attachments/assets/bfbaa1f3-6e25-4c82-bd7f-648e42c1e7ee)
+![image](https://github.com/user-attachments/assets/747bda18-8573-4573-8839-2ef7d21d61eb)
+![image](https://github.com/user-attachments/assets/1b5c1c4e-a7d6-4b9f-b6ad-bb0bd78b1d81)
 
 ## Configuration
 
