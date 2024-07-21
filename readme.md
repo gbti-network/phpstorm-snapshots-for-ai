@@ -1,5 +1,7 @@
 # Snapshots for AI
 
+https://plugins.jetbrains.com/plugin/24889-snapshots-for-ai/
+
 ## Overview
 
 Snapshots for AI is a custom plugin for PHPStorm that generates machine-readable markdown snapshots of the files the user is currently working on. These generated markdown files can be fed to your favorite large language model (LLM) for further processing or analysis.
