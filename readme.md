@@ -8,10 +8,6 @@ Snapshots for AI is a custom plugin for PHPStorm that generates machine-readable
 
 https://www.youtube.com/watch?v=xiCwXUZVW6k
 
-### Example Markdown Output
-
-https://plugins.jetbrains.com/plugin/24889-snapshots-for-ai/example-markdown-output
-
 ## Features
 
 - **Generate Markdown Snapshots**: Create snapshots of your current files in markdown format.
@@ -45,6 +41,10 @@ https://plugins.jetbrains.com/plugin/24889-snapshots-for-ai/example-markdown-out
 ![image](https://github.com/user-attachments/assets/bfbaa1f3-6e25-4c82-bd7f-648e42c1e7ee)
 ![image](https://github.com/user-attachments/assets/747bda18-8573-4573-8839-2ef7d21d61eb)
 ![image](https://github.com/user-attachments/assets/1b5c1c4e-a7d6-4b9f-b6ad-bb0bd78b1d81)
+
+### Example Markdown Output
+
+https://plugins.jetbrains.com/plugin/24889-snapshots-for-ai/example-markdown-output
 
 ## Configuration
 
