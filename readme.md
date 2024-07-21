@@ -38,11 +38,11 @@ https://plugins.jetbrains.com/plugin/24889-snapshots-for-ai/example-markdown-out
 ## Usage
 
 1. **Creating a Snapshot**:
-    - Navigate to `Tools > Create Snapshot`.
+    - Navigate to `Tools > Create Snapshot` or click the camera icon at the top right side of the main toolbar.
     - Enter your prompt, select the files to include, and click `OK`.
+      
+![image](https://github.com/user-attachments/assets/e71f10db-b520-49c0-a371-1fdfa604f362)
 
-2. **Opening the Snapshots Tool Window**:
-    - Click on the `Snapshots for AI` tool window in the right sidebar of PHPStorm.
 
 ## Configuration
 
