@@ -1,8 +1,8 @@
 <idea-plugin>
     <id>com.gbti.snapshotsforai</id>
     <name>Snapshots for AI</name>
-    <version>2024.8.3</version>
-    <product-descriptor code="PSNAPSHOTSFORAI" release-date="20240719" release-version="20248"/>
+    <version>2024.9.1</version>
+    <product-descriptor code="PSNAPSHOTSFORAI" release-date="20240721" release-version="20249"/>
     <vendor email="hudson.atwell@gmail.com" url="http://gbti.network">GBTI Network</vendor>
 
     <description><![CDATA[
@@ -13,7 +13,7 @@
 
 
     <change-notes><![CDATA[
-<h2>2024.8.1</h2>
+<h2>2024.9.1</h2>
 <ul>
   <li>Released!</li>
 </ul>]]>
