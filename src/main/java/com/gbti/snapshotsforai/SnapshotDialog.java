@@ -1,11 +1,14 @@
 package com.gbti.snapshotsforai;
 
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.util.messages.MessageBusConnection;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -28,22 +31,12 @@ public class SnapshotDialog extends DialogWrapper {
     private final JScrollPane scrollPane;
     private final Project project;
     private final JButton toggleButton;
+    private MessageBusConnection connection;
 
     public SnapshotDialog(@Nullable Project project, String defaultPrompt, boolean defaultIncludeEntireProjectStructure, boolean defaultIncludeAllFiles) {
         super(project);
         this.project = project;
         setTitle("Generate Markdown Snapshot");
-
-        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-        VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
-
-        for (VirtualFile file : openFiles) {
-            if (!file.getPath().contains("/.snapshots/")) {
-                JCheckBox checkBox = new JCheckBox(file.getPath());
-                checkBox.setSelected(true); // Set checkbox as selected by default
-                fileCheckBoxes.add(checkBox);
-            }
-        }
 
         promptField = new JTextField(defaultPrompt);
         includeEntireProjectStructureCheckBox = new JCheckBox("Include entire project structure");
@@ -58,26 +51,62 @@ public class SnapshotDialog extends DialogWrapper {
         toggleButton.addActionListener(this::toggleFileSelections);
 
         filesPanel = new JPanel(new GridLayout(0, 1, 5, 5));
-        if (fileCheckBoxes.isEmpty()) {
-            JLabel noFilesLabel = new JLabel("No files are currently open.");
-            filesPanel.add(noFilesLabel);
-        } else {
-            for (JCheckBox checkBox : fileCheckBoxes) {
-                filesPanel.add(checkBox);
-            }
-        }
+        scrollPane = new JScrollPane(filesPanel);
 
         allFilesLabel = new JLabel("<html><i>All applicable files located in the project will be included in the snapshot markdown.</i></html>");
         allFilesLabel.setVisible(defaultIncludeAllFiles);
 
-        scrollPane = new JScrollPane(filesPanel);
         if (defaultIncludeAllFiles) {
             filesPanel.setVisible(false);
             scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
             scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         }
 
+        initFileCheckboxes();
+
+        connection = project.getMessageBus().connect();
+        connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
+            @Override
+            public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+                updateFileCheckboxes();
+            }
+
+            @Override
+            public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+                updateFileCheckboxes();
+            }
+        });
+
         init();
+    }
+
+    private void initFileCheckboxes() {
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
+
+        fileCheckBoxes.clear();
+        filesPanel.removeAll();
+
+        for (VirtualFile file : openFiles) {
+            if (!file.getPath().contains("/.snapshots/")) {
+                JCheckBox checkBox = new JCheckBox(file.getPath());
+                checkBox.setSelected(true); // Set checkbox as selected by default
+                fileCheckBoxes.add(checkBox);
+                filesPanel.add(checkBox);
+            }
+        }
+
+        if (fileCheckBoxes.isEmpty()) {
+            JLabel noFilesLabel = new JLabel("No files are currently open.");
+            filesPanel.add(noFilesLabel);
+        }
+
+        filesPanel.revalidate();
+        filesPanel.repaint();
+    }
+
+    private void updateFileCheckboxes() {
+        SwingUtilities.invokeLater(this::initFileCheckboxes);
     }
 
     @Nullable
@@ -152,6 +181,14 @@ public class SnapshotDialog extends DialogWrapper {
             }
         }
         return selectedFiles;
+    }
+
+    @Override
+    protected void dispose() {
+        super.dispose();
+        if (connection != null) {
+            connection.disconnect();
+        }
     }
 
     @Override
