@@ -1,40 +1,44 @@
 <idea-plugin>
     <id>com.gbti.snapshotsforai</id>
     <name>Snapshots for AI</name>
-    <version>2024.9.1</version>
-    <product-descriptor code="PSNAPSHOTSFORAI" release-date="20240721" release-version="20249"/>
+    <version>2024.9.2</version>
+    <product-descriptor code="PSNAPSHOTSFORAI" release-date="20240722" release-version="20249"/>
     <vendor email="hudson.atwell@gmail.com" url="http://gbti.network">GBTI Network</vendor>
 
     <description><![CDATA[
         Snapshots for AI helps generate machine-readable markdown snapshots of files that users are currently working on. This plugin empowers developers by providing an efficient way to document and share their codebase structure and content with large languages models (LLMS) such as ChatGPT, Claude.AI, and Grok, enabling a new level of interaction and analysis with your code.<br><br>
 
         The plugin offers flexible configuration options, allowing users to include or exclude specific files and patterns, ensuring that only the relevant parts of the project are captured. Additionally, users can choose to document the entire project structure or focus on individual files, tailoring the snapshots to their specific needs. With Snapshots for AI, you can enhance your development workflow, improve documentation practices, and leverage the power of AI to take your coding experience to new heights.
-]]></description>
-
+    ]]></description>
 
     <change-notes><![CDATA[
-<h2>2024.9.1</h2>
-<ul>
-  <li>Released!</li>
-</ul>]]>
-    </change-notes>
+        <h2>2024.9.2</h2>
+        <ul>
+          <li>Addressing dependency warnings regarding depreciating APIs.</li>
+        </ul>
+        <h2>2024.8.1</h2>
+        <ul>
+          <li>Released!</li>
+        </ul>
+    ]]></change-notes>
 
     <idea-version since-build="222.0" until-build="233.*"/>
 
-    <!-- Define explicit module dependencies -->
     <depends>com.intellij.modules.platform</depends>
     <depends>com.jetbrains.php</depends>
 
-    <applicationListeners>
-        <listener class="com.gbti.snapshotsforai.SnapshotProjectManagerListener" topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
+    <application-components>
+        <component>
+            <implementation-class>com.gbti.snapshotsforai.SnapshotStartupActivity</implementation-class>
+        </component>
+    </application-components>
 
     <actions>
-
-        <action id="com.gbti.snapshotsforai.actions.CreateSnapshotActionWithText" class="com.gbti.snapshotsforai.actions.CreateSnapshotAction" text="Create Snapshot" icon="/icons/camera-16.svg">
+        <action id="com.gbti.snapshotsforai.actions.CreateSnapshotActionWithText"
+                class="com.gbti.snapshotsforai.actions.CreateSnapshotAction"
+                text="Create Snapshot" icon="/icons/camera-16.svg">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
-
         <action id="com.gbti.snapshotsforai.actions.MainToolbarRight"
                 class="com.gbti.snapshotsforai.actions.CreateSnapshotAction"
                 text="Create a markdown snapshot"

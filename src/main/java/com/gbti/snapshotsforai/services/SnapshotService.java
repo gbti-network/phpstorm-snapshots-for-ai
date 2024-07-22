@@ -137,6 +137,8 @@ public final class SnapshotService {
 
         Files.write(readmeFilePath, readmeContent.getBytes());
 
-        VirtualFileManager.getInstance().syncRefresh();
+        VirtualFileManager.getInstance().asyncRefresh(() -> {
+            System.out.println("Virtual file system refreshed");
+        });
     }
 }
