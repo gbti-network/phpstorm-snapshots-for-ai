@@ -32,10 +32,10 @@ https://www.youtube.com/watch?v=xiCwXUZVW6k
 ## Usage
 
 1. **Creating a Snapshot**:
-    - Navigate to `Tools > Create Snapshot` or click the camera icon at the top right side of the main toolbar.
-    - Enter your prompt, select the files to include, and click `OK`.
-    - Snapshop will be generated and opened automatically.
-    - Snapshots are stored inside the `.snapshots` directory at the root of your project application
+   - Navigate to `Tools > Create Snapshot` or click the camera icon at the top right side of the main toolbar.
+   - Enter your prompt, select the files to include, and click `OK`.
+   - Snapshop will be generated and opened automatically.
+   - Snapshots are stored inside the `.snapshots` directory at the root of your project application
 
 ### Screenshots
 
@@ -82,36 +82,35 @@ The `config.json` file in the `.snapshots` directory allows you to customize the
     "*.iml",
     "coverage",
     "*.min.js",
-    "*.min.css"
+    "*.min.css",
+    "__pycache__"
+  ],
+  "included_patterns": [
+    "build.gradle",
+    "settings.gradle",
+    "gradle.properties",
+    "pom.xml",
+    "Makefile",
+    "CMakeLists.txt",
+    "package.json",
+    "package-lock.json",
+    "yarn.lock",
+    "requirements.txt",
+    "Pipfile",
+    "Pipfile.lock",
+    "Gemfile",
+    "Gemfile.lock",
+    "composer.json",
+    "composer.lock",
+    ".editorconfig",
+    ".eslintrc.json",
+    ".eslintrc.js",
+    ".prettierrc",
+    ".babelrc",
+    ".env",
+    ".dockerignore",
+    ".gitattributes",
+    ".stylelintrc",
+    ".npmrc"
   ]
 }
-```
-![image](https://github.com/user-attachments/assets/3a4db07b-7de3-4be3-9c42-0d5291736009)
-
-
-## Development
-
-To contribute to the development of this plugin, follow these steps:
-
-1. **Fork the repository** on GitHub.
-
-2. **Create a new branch**:
-   ```bash
-   git checkout -b feature-branch-name
-   ```
-
-3. **Make your changes** and commit them:
-   ```bash
-   git commit -m "Description of changes"
-   ```
-
-4. **Push to your forked repository**:
-   ```bash
-   git push origin feature-branch-name
-   ```
-
-5. **Create a pull request** on GitHub.
-
-## Contact
-
-For any inquiries or support, please contact [gbti.labs@gmail.com](mailto:gbti.labs@gmail.com).

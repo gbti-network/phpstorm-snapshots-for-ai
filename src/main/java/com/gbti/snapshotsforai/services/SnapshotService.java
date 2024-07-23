@@ -1,6 +1,7 @@
-package com.gbti.snapshotsforai;
+package com.gbti.snapshotsforai.services;
 
 import com.intellij.openapi.components.Service;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.json.JSONArray;
@@ -13,6 +14,7 @@ import java.nio.file.Paths;
 
 @Service
 public final class SnapshotService {
+    private static final Logger LOG = Logger.getInstance(SnapshotService.class);
     private final Project project;
 
     public SnapshotService(Project project) {
@@ -20,28 +22,28 @@ public final class SnapshotService {
     }
 
     public void initializeSnapshotDirectory() throws IOException {
+        LOG.info("Initializing snapshot directory");
         String basePath = project.getBasePath();
         if (basePath == null) {
+            LOG.error("Project base path is null");
             throw new IOException("Project base path is null");
         }
+        LOG.info("Project base path: " + basePath);
 
         Path snapshotsDir = Paths.get(basePath, ".snapshots");
+        LOG.info("Snapshots directory path: " + snapshotsDir);
+
         if (!Files.exists(snapshotsDir)) {
+            LOG.info("Creating snapshots directory");
             Files.createDirectory(snapshotsDir);
+        } else {
+            LOG.info("Snapshots directory already exists");
         }
 
         Path configFilePath = snapshotsDir.resolve("config.json");
-        JSONObject config;
-
-        if (Files.exists(configFilePath)) {
-            String configContent = new String(Files.readAllBytes(configFilePath));
-            config = new JSONObject(configContent);
-        } else {
-            config = new JSONObject();
-        }
-
-        // Set default values if they are not already present
-        if (!config.has("excluded_patterns")) {
+        if (!Files.exists(configFilePath)) {
+            LOG.info("Creating config file at: " + configFilePath);
+            JSONObject config = new JSONObject();
             config.put("excluded_patterns", new JSONArray()
                 .put(".git")
                 .put(".gitignore")
@@ -68,25 +70,46 @@ public final class SnapshotService {
                 .put("*.min.css")
                 .put("__pycache__")
             );
-        }
 
-        JSONObject defaultConfig = config.optJSONObject("default");
-        if (defaultConfig == null) {
-            defaultConfig = new JSONObject();
-            config.put("default", defaultConfig);
-        }
+            config.put("included_patterns", new JSONArray()
+                .put("build.gradle")
+                .put("settings.gradle")
+                .put("gradle.properties")
+                .put("pom.xml")
+                .put("Makefile")
+                .put("CMakeLists.txt")
+                .put("package.json")
+                .put("package-lock.json")
+                .put("yarn.lock")
+                .put("requirements.txt")
+                .put("Pipfile")
+                .put("Pipfile.lock")
+                .put("Gemfile")
+                .put("Gemfile.lock")
+                .put("composer.json")
+                .put("composer.lock")
+                .put(".editorconfig")
+                .put(".eslintrc.json")
+                .put(".eslintrc.js")
+                .put(".prettierrc")
+                .put(".babelrc")
+                .put(".env")
+                .put(".dockerignore")
+                .put(".gitattributes")
+                .put(".stylelintrc")
+                .put(".npmrc")
+            );
 
-        if (!defaultConfig.has("default_prompt")) {
+            JSONObject defaultConfig = new JSONObject();
             defaultConfig.put("default_prompt", "Enter your prompt here");
-        }
-        if (!defaultConfig.has("default_include_entire_project_structure")) {
             defaultConfig.put("default_include_entire_project_structure", true);
-        }
-        if (!defaultConfig.has("default_include_all_files")) {
             defaultConfig.put("default_include_all_files", false);
-        }
 
-        Files.write(configFilePath, config.toString(4).getBytes());
+            config.put("default", defaultConfig);
+            Files.write(configFilePath, config.toString(4).getBytes());
+        } else {
+            LOG.info("Config file already exists at: " + configFilePath);
+        }
 
         Path readmeFilePath = snapshotsDir.resolve("readme.md");
         String readmeContent = "# Snapshots for AI\n\n" +
@@ -118,10 +141,38 @@ public final class SnapshotService {
                 "  - `*.min.js`\n" +
                 "  - `*.min.css`\n" +
                 "  - `__pycache__`\n" +
-                "- `default`: A subkey containing default settings:\n" +
-                "  - `default_prompt`: A default prompt to be used when creating snapshots.\n" +
-                "  - `default_include_entire_project_structure`: A boolean setting to include the entire project structure by default.\n" +
-                "  - `default_include_all_files`: A boolean setting to include all project files by default.\n\n" +
+                "- `included_patterns`: A list of patterns to include in the project structure snapshot. Patterns include:\n" +
+                "  - `build.gradle`\n" +
+                "  - `settings.gradle`\n" +
+                "  - `gradle.properties`\n" +
+                "  - `pom.xml`\n" +
+                "  - `Makefile`\n" +
+                "  - `CMakeLists.txt`\n" +
+                "  - `package.json`\n" +
+                "  - `package-lock.json`\n" +
+                "  - `yarn.lock`\n" +
+                "  - `requirements.txt`\n" +
+                "  - `Pipfile`\n" +
+                "  - `Pipfile.lock`\n" +
+                "  - `Gemfile`\n" +
+                "  - `Gemfile.lock`\n" +
+                "  - `composer.json`\n" +
+                "  - `composer.lock`\n" +
+                "  - `.editorconfig`\n" +
+                "  - `.eslintrc.json`\n" +
+                "  - `.eslintrc.js`\n" +
+                "  - `.prettierrc`\n" +
+                "  - `.babelrc`\n" +
+                "  - `.env`\n" +
+                "  - `.dockerignore`\n" +
+                "  - `.gitattributes`\n" +
+                "  - `.stylelintrc`\n" +
+                "  - `.npmrc`\n\n" +
+                "## Default Configuration\n\n" +
+                "- `default_prompt`: The default prompt text that will be displayed in the snapshot dialog.\n" +
+                "- `default_include_entire_project_structure`: Whether to include the entire project structure by default when creating a snapshot.\n" +
+                "- `default_include_all_files`: Whether to include all project files by default when creating a snapshot.\n" +
+                "\n" +
                 "## Usage\n\n" +
                 "To create a snapshot, follow these steps:\n\n" +
                 "### From the Tools Menu\n" +
@@ -139,6 +190,7 @@ public final class SnapshotService {
 
         VirtualFileManager.getInstance().asyncRefresh(() -> {
             System.out.println("Virtual file system refreshed");
+            LOG.info("Virtual file system refreshed");
         });
     }
 }

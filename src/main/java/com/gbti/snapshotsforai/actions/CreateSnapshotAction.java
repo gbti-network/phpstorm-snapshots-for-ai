@@ -56,6 +56,7 @@ public class CreateSnapshotAction extends AnAction {
         boolean defaultIncludeEntireProjectStructure = defaultConfig.optBoolean("default_include_entire_project_structure", false);
         boolean defaultIncludeAllFiles = defaultConfig.optBoolean("default_include_all_files", false);
         JSONArray excludedPatterns = config.optJSONArray("excluded_patterns");
+        JSONArray includedPatterns = config.optJSONArray("included_patterns");
 
         SnapshotDialog dialog = new SnapshotDialog(project, defaultPrompt, defaultIncludeEntireProjectStructure, defaultIncludeAllFiles);
         if (!dialog.showAndGet()) {
@@ -69,7 +70,7 @@ public class CreateSnapshotAction extends AnAction {
 
         // If "Include all project files" is checked, get all project files not excluded by patterns
         if (includeAllFiles) {
-            selectedFiles = getAllProjectFiles(basePath, excludedPatterns);
+            selectedFiles = getAllProjectFiles(basePath, excludedPatterns, includedPatterns);
         }
 
         // Filter out image files except SVGs
@@ -86,7 +87,7 @@ public class CreateSnapshotAction extends AnAction {
         if (includeEntireProjectStructure) {
             markdown.append("# Project Structure\n\n");
             try {
-                List<String> projectFiles = getAllProjectFiles(basePath, excludedPatterns);
+                List<String> projectFiles = getAllProjectFiles(basePath, excludedPatterns, includedPatterns);
                 markdown.append(formatProjectStructure(basePath, projectFiles));
             } catch (Exception ex) {
                 markdown.append("Exception occurred while formatting project structure: ").append(ex.getMessage()).append("\n");
@@ -149,14 +150,24 @@ public class CreateSnapshotAction extends AnAction {
         }
     }
 
-    private List<String> getAllProjectFiles(String basePath, JSONArray excludedPatterns) {
+    private List<String> getAllProjectFiles(String basePath, JSONArray excludedPatterns, JSONArray includedPatterns) {
         List<String> fileList = new ArrayList<>();
-        List<Pattern> patterns = new ArrayList<>();
+        List<Pattern> excludePatterns = new ArrayList<>();
+        List<Pattern> includePatterns = new ArrayList<>();
+
         if (excludedPatterns != null) {
             for (int i = 0; i < excludedPatterns.length(); i++) {
                 String patternStr = excludedPatterns.getString(i);
                 patternStr = patternStr.replace(".", "\\.").replace("*", ".*"); // Convert glob patterns to regex patterns
-                patterns.add(Pattern.compile(".*" + patternStr + "(/.*)?"));
+                excludePatterns.add(Pattern.compile(".*" + patternStr + "(/.*)?"));
+            }
+        }
+
+        if (includedPatterns != null) {
+            for (int i = 0; i < includedPatterns.length(); i++) {
+                String patternStr = includedPatterns.getString(i);
+                patternStr = patternStr.replace(".", "\\.").replace("*", ".*"); // Convert glob patterns to regex patterns
+                includePatterns.add(Pattern.compile(".*" + patternStr + "(/.*)?"));
             }
         }
 
@@ -165,8 +176,9 @@ public class CreateSnapshotAction extends AnAction {
                 .filter(Files::isRegularFile)
                 .forEach(path -> {
                     String filePath = path.toString().replace('\\', '/');  // Normalize to use forward slashes
-                    boolean excluded = patterns.stream().anyMatch(pattern -> pattern.matcher(filePath).matches());
-                    if (!excluded) {
+                    boolean excluded = excludePatterns.stream().anyMatch(pattern -> pattern.matcher(filePath).matches());
+                    boolean included = includePatterns.stream().anyMatch(pattern -> pattern.matcher(filePath).matches());
+                    if (!excluded || included) {
                         fileList.add(filePath);
                     }
                 });
