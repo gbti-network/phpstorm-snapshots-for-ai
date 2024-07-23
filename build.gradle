@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.gbti'
-version '2024.9.3'
+version '2024.9.4'
 
 repositories {
     mavenCentral()
@@ -21,7 +21,7 @@ intellij {
 tasks {
     patchPluginXml {
         sinceBuild.set("222")
-        untilBuild.set("233.*")
+        untilBuild.set("241.*")
     }
 }
 
