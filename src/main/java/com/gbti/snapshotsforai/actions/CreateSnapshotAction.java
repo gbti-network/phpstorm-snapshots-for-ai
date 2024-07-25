@@ -158,16 +158,16 @@ public class CreateSnapshotAction extends AnAction {
         if (excludedPatterns != null) {
             for (int i = 0; i < excludedPatterns.length(); i++) {
                 String patternStr = excludedPatterns.getString(i);
-                patternStr = patternStr.replace(".", "\\.").replace("*", ".*"); // Convert glob patterns to regex patterns
-                excludePatterns.add(Pattern.compile(".*" + patternStr + "(/.*)?"));
+                patternStr = Pattern.quote(patternStr).replace("*", "\\E.*\\Q");
+                excludePatterns.add(Pattern.compile("^" + Pattern.quote(basePath.replace("\\", "/")) + "/\\.?" + patternStr + ".*$"));
             }
         }
 
         if (includedPatterns != null) {
             for (int i = 0; i < includedPatterns.length(); i++) {
                 String patternStr = includedPatterns.getString(i);
-                patternStr = patternStr.replace(".", "\\.").replace("*", ".*"); // Convert glob patterns to regex patterns
-                includePatterns.add(Pattern.compile(".*" + patternStr + "(/.*)?"));
+                patternStr = patternStr.replace(".", "\\.").replace("*", ".*");
+                includePatterns.add(Pattern.compile(".*/" + patternStr + "$"));
             }
         }
 
@@ -175,10 +175,14 @@ public class CreateSnapshotAction extends AnAction {
             Files.walk(Paths.get(basePath))
                 .filter(Files::isRegularFile)
                 .forEach(path -> {
-                    String filePath = path.toString().replace('\\', '/');  // Normalize to use forward slashes
-                    boolean excluded = excludePatterns.stream().anyMatch(pattern -> pattern.matcher(filePath).matches());
-                    boolean included = includePatterns.stream().anyMatch(pattern -> pattern.matcher(filePath).matches());
-                    if (!excluded || included) {
+                    String filePath = path.toString().replace('\\', '/');
+                    boolean excluded = isExcluded(filePath, excludePatterns);
+                    boolean included = isIncluded(filePath, includePatterns);
+                    boolean inExcludedDir = isInExcludedDirectory(filePath, excludePatterns);
+
+                    if (included && !inExcludedDir) {
+                        fileList.add(filePath);
+                    } else if (!excluded && !inExcludedDir) {
                         fileList.add(filePath);
                     }
                 });
@@ -186,6 +190,38 @@ public class CreateSnapshotAction extends AnAction {
             e.printStackTrace();
         }
         return fileList;
+    }
+
+    private boolean isExcluded(String filePath, List<Pattern> excludePatterns) {
+        for (Pattern pattern : excludePatterns) {
+            if (pattern.matcher(filePath).matches()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isIncluded(String filePath, List<Pattern> includePatterns) {
+        if (includePatterns.isEmpty()) {
+            return true; // If no include patterns, consider all files included
+        }
+        for (Pattern pattern : includePatterns) {
+            if (pattern.matcher(filePath).matches()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isInExcludedDirectory(String filePath, List<Pattern> excludePatterns) {
+        Path path = Paths.get(filePath).getParent();
+        while (path != null) {
+            if (isExcluded(path.toString().replace('\\', '/'), excludePatterns)) {
+                return true;
+            }
+            path = path.getParent();
+        }
+        return false;
     }
 
     private List<String> filterOutImageFiles(List<String> filePaths) {

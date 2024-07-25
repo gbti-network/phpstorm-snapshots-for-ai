@@ -2,7 +2,7 @@
     <id>com.gbti.snapshotsforai</id>
     <name>Snapshots for AI</name>
     <version>2024.9.4</version>
-    <product-descriptor code="PSNAPSHOTSFORAI" release-date="20240723" release-version="20249"/>
+    <!--<product-descriptor code="PSNAPSHOTSFORAI" release-date="20240723" release-version="20249"/>-->
     <vendor email="hudson.atwell@gmail.com" url="http://gbti.network">GBTI Network</vendor>
 
     <description><![CDATA[
@@ -12,6 +12,10 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <h2>2024.9.5</h2>
+        <ul>
+          <li>[bugfix] Included patterns under excluded directories will no longer make it through into the snapshot. </li>
+        </ul>
         <h2>2024.9.4</h2>
         <ul>
           <li>[support] Expanded support to PHPStorm 2024</li>

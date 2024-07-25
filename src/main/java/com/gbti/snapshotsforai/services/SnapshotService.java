@@ -47,13 +47,13 @@ public final class SnapshotService {
             config.put("excluded_patterns", new JSONArray()
                 .put(".git")
                 .put(".gitignore")
+                .put("gradle")
                 .put("gradlew")
                 .put("gradlew.*")
                 .put("node_modules")
                 .put(".snapshots")
                 .put(".idea")
                 .put(".vscode")
-                .put("gradle")
                 .put("*.log")
                 .put("*.tmp")
                 .put("target")
@@ -119,13 +119,13 @@ public final class SnapshotService {
                 "- `excluded_patterns`: A list of patterns to exclude from the project structure snapshot. Patterns include:\n" +
                 "  - `.git`\n" +
                 "  - `.gitignore`\n" +
+                "  - `gradle`\n" +
                 "  - `gradlew`\n" +
                 "  - `gradlew.*`\n" +
                 "  - `node_modules`\n" +
                 "  - `.snapshots`\n" +
                 "  - `.idea`\n" +
                 "  - `.vscode`\n" +
-                "  - `gradle`\n" +
                 "  - `*.log`\n" +
                 "  - `*.tmp`\n" +
                 "  - `target`\n" +
