@@ -159,7 +159,7 @@ public class CreateSnapshotAction extends AnAction {
             for (int i = 0; i < excludedPatterns.length(); i++) {
                 String patternStr = excludedPatterns.getString(i);
                 patternStr = Pattern.quote(patternStr).replace("*", "\\E.*\\Q");
-                excludePatterns.add(Pattern.compile("^" + Pattern.quote(basePath.replace("\\", "/")) + "/\\.?" + patternStr + ".*$"));
+                excludePatterns.add(Pattern.compile("^" + Pattern.quote(basePath.replace("\\", "/")) + "(/.*)?/\\.?" + patternStr + ".*$"));
             }
         }
 
