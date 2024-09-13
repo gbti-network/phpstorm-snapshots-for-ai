@@ -1,8 +1,8 @@
 <idea-plugin>
     <id>com.gbti.snapshotsforai</id>
     <name>Snapshots for AI</name>
-    <version>2024.9.7</version>
-    <product-descriptor code="PSNAPSHOTSFORAI" release-date="20240913" release-version="20249"/>
+    <version>8000.2</version>
+    <product-descriptor code="PSNAPSHOTSFORAI" release-date="20240913" release-version="80002"/>
     <vendor email="hudson.atwell@gmail.com" url="http://gbti.network">GBTI Network</vendor>
 
     <description><![CDATA[
@@ -12,9 +12,10 @@
     ]]></description>
 
     <change-notes><![CDATA[
-        <h2>2024.9.7</h2>
+        <h2>8000.2</h2>
         <ul>
           <li>Making asset compatible with 242.* </li>
+          <li>Changing version structure to be more compatible with InteliJ systems. Welcome to 8000. </li>
         </ul>
         <h2>2024.9.5</h2>
         <ul>
