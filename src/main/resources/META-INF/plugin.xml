@@ -1,8 +1,8 @@
 <idea-plugin>
     <id>com.gbti.snapshotsforai</id>
     <name>Snapshots for AI</name>
-    <version>2024.9.4</version>
-    <!--<product-descriptor code="PSNAPSHOTSFORAI" release-date="20240723" release-version="20249"/>-->
+    <version>2024.9.7</version>
+    <product-descriptor code="PSNAPSHOTSFORAI" release-date="20240913" release-version="20249"/>
     <vendor email="hudson.atwell@gmail.com" url="http://gbti.network">GBTI Network</vendor>
 
     <description><![CDATA[
@@ -12,6 +12,10 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <h2>2024.9.7</h2>
+        <ul>
+          <li>Making asset compatible with 242.* </li>
+        </ul>
         <h2>2024.9.5</h2>
         <ul>
           <li>[bugfix] Included patterns under excluded directories will no longer make it through into the snapshot. </li>
@@ -36,7 +40,7 @@
         </ul>
     ]]></change-notes>
 
-    <idea-version since-build="193.0" until-build="241.*"/>
+    <idea-version since-build="193.0" until-build="242.*"/>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.jetbrains.php</depends>

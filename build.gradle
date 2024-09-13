@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.gbti'
-version '2024.9.4'
+version '2024.9.7'
 
 repositories {
     mavenCentral()
@@ -13,7 +13,7 @@ repositories {
 
 intellij {
     pluginName = "Snapshots for AI"
-    version = '2022.2'
+    version = '2024.2.1'
     type = "PS"
     plugins = ['com.jetbrains.php']
 }
@@ -21,7 +21,7 @@ intellij {
 tasks {
     patchPluginXml {
         sinceBuild.set("222")
-        untilBuild.set("241.*")
+        untilBuild.set("242.*")
     }
 }
 
