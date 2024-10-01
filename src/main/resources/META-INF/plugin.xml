@@ -1,8 +1,9 @@
 <idea-plugin>
     <id>com.gbti.snapshotsforai</id>
     <name>Snapshots for AI</name>
-    <version>8000.2</version>
-    <product-descriptor code="PSNAPSHOTSFORAI" release-date="20240913" release-version="80002"/>
+    <version>8000.3</version>
+    <idea-version since-build="193.0"/>
+    <product-descriptor code="PSNAPSHOTSFORAI" release-date="20240930" release-version="80003"/>
     <vendor email="hudson.atwell@gmail.com" url="http://gbti.network">GBTI Network</vendor>
 
     <description><![CDATA[
@@ -12,6 +13,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <h2>8000.3</h2>
+        <ul>
+          <li>Adding several common exclude patterns</li>
+          <li>Removing the until-build parameter from idea-version to allow updates with future IDE versions. </li>
+        </ul>
         <h2>8000.2</h2>
         <ul>
           <li>Making asset compatible with 242.* </li>
@@ -41,7 +47,6 @@
         </ul>
     ]]></change-notes>
 
-    <idea-version since-build="193.0" until-build="242.*"/>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.jetbrains.php</depends>
