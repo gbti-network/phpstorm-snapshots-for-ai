@@ -51,6 +51,7 @@ public final class SnapshotService {
                 .put("gradlew")
                 .put("gradlew.*")
                 .put("node_modules")
+                .put("vendor")
                 .put(".snapshots")
                 .put(".idea")
                 .put(".vscode")
@@ -68,7 +69,10 @@ public final class SnapshotService {
                 .put("coverage")
                 .put("*.min.js")
                 .put("*.min.css")
+                .put("netlify.toml")
+                .put("package-lock.json")
                 .put("__pycache__")
+                .put("LICENSE")
             );
 
             config.put("included_patterns", new JSONArray()
@@ -79,7 +83,6 @@ public final class SnapshotService {
                 .put("Makefile")
                 .put("CMakeLists.txt")
                 .put("package.json")
-                .put("package-lock.json")
                 .put("yarn.lock")
                 .put("requirements.txt")
                 .put("Pipfile")
@@ -123,6 +126,7 @@ public final class SnapshotService {
                 "  - `gradlew`\n" +
                 "  - `gradlew.*`\n" +
                 "  - `node_modules`\n" +
+                "  - `vendor`\n" +
                 "  - `.snapshots`\n" +
                 "  - `.idea`\n" +
                 "  - `.vscode`\n" +
@@ -140,7 +144,10 @@ public final class SnapshotService {
                 "  - `coverage`\n" +
                 "  - `*.min.js`\n" +
                 "  - `*.min.css`\n" +
+                "  - `netlify.toml`\n" +
+                "  - `package-lock.json`\n" +
                 "  - `__pycache__`\n" +
+                "  - `LICENSE`\n" +
                 "- `included_patterns`: A list of patterns to include in the project structure snapshot. Patterns include:\n" +
                 "  - `build.gradle`\n" +
                 "  - `settings.gradle`\n" +
