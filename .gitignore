@@ -9,3 +9,5 @@ gradle/wrapper/gradle-wrapper.properties
 bat/
 .snapshots2/
 .marketing/
+.product/assets/config.json
+.product/assets/
