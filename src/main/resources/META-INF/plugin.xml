@@ -1,9 +1,9 @@
 <idea-plugin>
     <id>com.gbti.snapshotsforai</id>
     <name>Snapshots for AI</name>
-    <version>8000.3</version>
+    <version>8000.4</version>
     <idea-version since-build="193.0"/>
-    <product-descriptor code="PSNAPSHOTSFORAI" release-date="20240930" release-version="80003"/>
+    <product-descriptor code="PSNAPSHOTSFORAI" release-date="20241110" release-version="80004"/>
     <vendor email="hudson.atwell@gmail.com" url="http://gbti.network">GBTI Network</vendor>
 
     <description><![CDATA[
@@ -13,6 +13,10 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <h2>8000.4</h2>
+        <ul>
+          <li>Support for 243.*</li>
+        </ul>
         <h2>8000.3</h2>
         <ul>
           <li>Adding several common exclude patterns</li>
